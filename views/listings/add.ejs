@@ -1,0 +1,53 @@
+<% layout("/layouts/biolerplate") %>
+    <div class="row">
+        <div class="col-8 offset-2">
+    <body>
+        <br>
+        <br>
+        <h3>Create New Listing</h3>
+     
+        <form method="post" action="/listings">
+         <div>
+         <label for="title" class="form-label">Title:</label>
+         <br>
+         <input type="text" name="title" id="title" placeholder="write title" class="form-control">
+         </div>
+         <br>
+         <div>
+         <label for="description" class="form-label">Description:</label>
+         <br>
+         <textarea name="description" placeholder="write description" class="form-control"></textarea>
+         </div>
+         <br>
+         <div>
+         <label for="image/url" class="form-label">ImageLink:</label>
+         <br>
+         <input type="text" name="image" id="image" placeholder="paste image link" class="form-control">
+         </div>
+         <br>
+         <div class="row">
+         <div class="mb-3 col-md-4">
+         <label for="price" class="form-label">Price:</label>
+         <br>
+         <input type="number" name="price" id="price" placeholder="e.g 1200" class="form-control">
+         <br>
+        </div>
+        <div class="mb-3 col-md-8">
+        <label for="Country" class="form-label">Country:</label>
+        <br>
+        <input type="text" name="Country" id="Country" placeholder="e.g India" class="form-control">
+        <br>
+        </div>
+         <div >
+         <label for="location" class="form-label">Location:</label>
+         <br>
+         <input type="text" name="location" id="location" placeholder="e.g Jaipur,Rajasthan" class="form-control">
+         <br>
+         <button class="btn btn-dark ">Submit</button>
+    
+        </form>
+        <br>
+        <br>
+    </body>
+    </div>
+    </div>

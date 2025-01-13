@@ -1,0 +1,33 @@
+<% layout("/layouts/biolerplate") %>
+    <body>
+       
+        <div class="row mt-3">
+            <div class="col-8 offset-2">
+                <h3>Listings Details:</h3>
+            
+        <div class="card col-6 offset-2">        
+        <img src="<%= list1.image.url %>" class="card-img-top" alt="Listing Image">
+        <div class="card-body">
+        <p class="card-text"><b><%= list1.title %></b></p>
+        <p class="card-text"><%= list1.description%></p>
+        <p class="card-text">&#8377;<%= list1.price.toLocaleString("en-IN")%></p>
+        <p class="card-text"><%= list1.location %></p>
+        <p class="card-text"><%= list1.country %></p>
+        </div>
+        <br>
+        
+            <div class="edit-delete">
+            <a href="/listings/<%= list1._id %>/edit"><button class="btn">EDIT</button></a>
+            <br>
+            <br>
+            <form method="post" action="/listings/<%= list1.id %>?_method=DELETE">
+                <button class="btn">DELETE</button>
+            </form>
+            </div>
+            <br>
+            <br>
+        </div>  
+    </div>
+</div>  
+
+    </body>

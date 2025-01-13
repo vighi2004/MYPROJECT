@@ -1,0 +1,106 @@
+.navbar{
+    height:5rem;
+    background-color: white;
+
+
+}
+.fa-compass{
+    background-color:#fe424d ;
+    font-size:2rem;
+
+}
+/*footer */
+footer{
+    width: 100%;
+}
+.f-info-links a {
+    text-decoration: none;
+    margin-right: 1rem;
+    align-items: center;
+    justify-content: center;
+ 
+}
+.f-info-links a:hover{
+    text-decoration: underline;
+}
+.f-info{
+    display: flex;
+    background-color: whitesmoke;
+    height: 8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: space-evenly; 
+    
+}
+ 
+.f-info-socials,.f-info-links,.f-info-brand{
+    width: 100%; 
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 1rem;
+    align-items: space-evenly;
+    justify-content: center;
+  
+}
+.f-info-socials i{
+    margin-right: 1rem;
+    font-size: 20px;
+    margin-top: auto;
+    
+}
+.f-info-brand{
+    width: 100%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;     
+}
+/*cards*/
+.card{
+    border:none !important;
+    margin-bottom: 2rem;
+}
+.card-img-top{
+    border-radius: 1rem;
+}
+body{
+  font-family: "Plus Jakarta Sans" !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.container{
+    flex: 1;
+}
+a{
+    text-decoration: none !important;
+}
+.hover01 {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .hover01:hover {
+    -webkit-transform: scale(0.95); /* Slightly smaller than original size */
+    transform: scale(0.95);
+  }
+  .btn{
+    background-color: #fe424d !important;
+    border: none !important;
+    color: white !important;
+  }
+  .btn:hover{
+    background-color: black !important;
+  }
+  /*show route*/
+.edit-delete {
+    display: flex;
+    justify-content: space-between; /* Space out buttons to opposite sides */
+    align-items: center; /* Vertically center the buttons */
+
+}
+/* Style for the delete button */
+.edit-delete form button {
+    margin-right: 7px; /* Optional: Adds spacing between the Edit and Delete buttons */
+}
