@@ -10,7 +10,8 @@
               <p class="card-text">
                 <b><%= list.title %></b>
                 <br>
-                &#8377;<%= list.price.toLocaleString("en-IN") %>/night
+                &#8377;<%= list.price ? list.price.toLocaleString("en-IN") : "Price Not Available" %>/night
+
               </p>
             </div>
           </div>

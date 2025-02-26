@@ -6,21 +6,25 @@
         <br>
         <h3>Create New Listing</h3>
      
-        <form method="post" action="/listings">
+        <form method="post" action="/listings" novalidate class="needs-validation">
          <div>
          <label for="title" class="form-label">Title:</label>
          <br>
-         <input type="text" name="title" id="title" placeholder="write title" class="form-control">
+         <input type="text" name="title" id="title" placeholder="write title" class="form-control" required>
+         <div class="valid-feedback">Title looks good!</div>
+         <div class="invalid-feedback">Enter the title</div>
          </div>
          <br>
          <div>
          <label for="description" class="form-label">Description:</label>
          <br>
-         <textarea name="description" placeholder="write description" class="form-control"></textarea>
-         </div>
+         <textarea name="description" placeholder="write description" class="form-control" required></textarea>
+         <div class="valid-feedback">Description looks good!</div>
+         <div class="invalid-feedback">Enter the description</div> 
+        </div>
          <br>
          <div>
-         <label for="image/url" class="form-label">ImageLink:</label>
+         <label for="image" class="form-label">ImageLink:</label>
          <br>
          <input type="text" name="image" id="image" placeholder="paste image link" class="form-control">
          </div>
@@ -29,22 +33,24 @@
          <div class="mb-3 col-md-4">
          <label for="price" class="form-label">Price:</label>
          <br>
-         <input type="number" name="price" id="price" placeholder="e.g 1200" class="form-control">
+         <input type="number" name="price" id="price" placeholder="e.g 1200" class="form-control" required>
+         <div class="invalid-feedback">Please enter valid price!</div>
          <br>
         </div>
         <div class="mb-3 col-md-8">
-        <label for="Country" class="form-label">Country:</label>
+        <label for="country" class="form-label">Country:</label>
         <br>
-        <input type="text" name="Country" id="Country" placeholder="e.g India" class="form-control">
-        <br>
+        <input type="text" name="country" id="country" placeholder="e.g India" class="form-control" required pattern="[A-Za-z\s]+" >
+         <div class="invalid-feedback">Enter valid country name</div>
+         <br>
         </div>
          <div >
          <label for="location" class="form-label">Location:</label>
          <br>
-         <input type="text" name="location" id="location" placeholder="e.g Jaipur,Rajasthan" class="form-control">
+         <input type="text" name="location" id="location" placeholder="e.g Jaipur,Rajasthan" class="form-control" required pattern="[A-Za-z\s]+">
+         <div class="invalid-feedback">Enter valid location</div>
          <br>
          <button class="btn btn-dark ">Submit</button>
-    
         </form>
         <br>
         <br>

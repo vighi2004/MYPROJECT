@@ -5,9 +5,14 @@ const Listing= require("./models/listing.js");
 const mongoose= require("mongoose")
 const path=require("path");
 const methodOverride=require("method-override");
+const wrapAsync=require("./utils/wrapAsync.js");
+const ExpressError=require("./utils/ExpressError.js");
+const {listingSchema}=require("./schema.js");
+const { error } = require('console');
 app.use(methodOverride("_method"));
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
+app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname,"public")));
 app.engine("ejs",ejsMate);
@@ -50,11 +55,11 @@ app.get("/",(req,res)=>
 // })
 
 //index route
-app.get("/listings",async (req,res)=>
+app.get("/listings",wrapAsync(async (req,res,next)=>
 {
     let alllistings=await Listing.find();
     res.render("listings/index.ejs",{alllistings});
-})
+}))
 
 //Add route
 app.get("/listings/add",(req,res)=>
@@ -63,17 +68,22 @@ app.get("/listings/add",(req,res)=>
     })
     
 //show route
-app.get("/listings/:id",async (req,res)=>
+app.get("/listings/:id",wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     let list1= await Listing.findById(id);
     res.render("listings/Show.ejs",{list1});
-})
+}))
 
 //create route
-app.post("/listings",async (req,res)=>
+app.post("/listings",wrapAsync(async (req,res,next)=>
 {
     let {title:title,description:description,image:image,price:price,location:location,country:country}=req.body;
+    let result=listingSchema.validate(req.body);
+    console.log(result);
+    if(result.error){
+        throw new ExpressError(400,result.error);
+    }
     const newListing =  await new Listing({
         title,
         description,
@@ -85,32 +95,55 @@ app.post("/listings",async (req,res)=>
     await newListing.save();
     console.log(newListing);
     res.redirect("/listings");
-})
+}))
 //youu can also write this instead of writting bigger code that is in input of add.ejs name=listing[title] write in all keys this is object that will generate key-value pair.
 // let newlist= await new Listing(req.body.listing)
 //await newlist.save()
 //beacuse of this you will save more space 
 
-app.get("/listings/:id/edit",async (req,res)=>
+app.get("/listings/:id/edit",wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     let list1= await Listing.findById(id);
     res.render("listings/edit.ejs",{list1});
-})
+}))
 //update route
-app.put("/listings/:id",async (req,res)=>
+app.put("/listings/:id",wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     let {title,description,image,price,location,country}=req.body;
-    await Listing.findByIdAndUpdate(id,{title,description,image,price,location,country});
-    res.redirect(`/listings/${id}`);
+    let listing = await Listing.findById(id);
 
-})
+    if (!listing) {
+        return res.status(404).send("Listing not found!");
+    }
+
+    if (image && image.trim() !== "") {
+        listing.image = { url: image };  // Store URL inside an object
+    }
+
+    // Update other fields
+    listing.title = title;
+    listing.description = description;
+    listing.price = price;
+    listing.location = location;
+    listing.country = country;
+
+    await listing.save(); // Save updated listing
+    res.redirect(`/listings/${id}`);
+}));
 //delete route
-app.delete("/listings/:id",async (req,res)=>
+app.delete("/listings/:id",wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     await Listing.findByIdAndDelete(id)
     res.redirect("/listings");
 
+}))
+app.all("*",(req,res,next)=>{
+    next(new ExpressError(404,"Page Not Found!"));
+})
+app.use((err,req,res,next)=>{
+    let {status=500,message="something went wrong!"}=err;
+    res.render("listings/error.ejs",{message});
 })
