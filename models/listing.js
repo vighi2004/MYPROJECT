@@ -1,4 +1,5 @@
-const mongoose=require("mongoose")
+const mongoose=require("mongoose");
+const Review = require("./reviews");
 let Schema=mongoose.Schema;
 const listingschema=new Schema(
     {
@@ -30,7 +31,12 @@ const listingschema=new Schema(
         },
         country:{
             type:String,
-        }
+        },
+        reviews:[{
+            type:Schema.Types.ObjectId,
+            ref:"Review"
+
+        }]
 
     }
 );
