@@ -48,6 +48,7 @@ const validlisting=(req,res,next)=>{
 }
 //check server review
 const validReview=(req,res,next)=>{
+    console.log("Received Data in Middleware:", req.body); 
     let{error}=reviewSchema.validate(req.body);
     if(error){
         let errmsg=error.details.map((el)=>el.message).join(",");
@@ -96,6 +97,7 @@ app.get("/listings/:id",wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     let list1= await Listing.findById(id).populate("reviews");
+    console.log("✅ Populated Reviews:", list1.reviews);
     res.render("listings/Show.ejs",{list1});
 }))
 
@@ -169,6 +171,14 @@ app.post("/listings/:id/reviews",validReview,wrapAsync(async(req,res)=>{
         console.log("Review saved!");
         res.redirect("/listings");
 }))
+//delete route for Review
+app.delete("/listings/:id/:reviewid",wrapAsync(async(req,res)=>{
+    let {id,reviewid}=req.params;
+    await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewid}});
+    await Review.findByIdAndDelete(reviewid);
+    res.redirect("/listings");
+}))
+
 app.all("*",(req,res,next)=>{
     next(new ExpressError(404,"Page Not Found!"));
 })

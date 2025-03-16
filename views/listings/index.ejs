@@ -4,7 +4,7 @@
         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1" >
         <%for(list of alllistings){%>
         <a href="/listings/<%= list._id %>">
-        <div class="card">
+        <div class="card listing-card">
             <img src="<%= list.image.url %>" class="card-img-top hover01" alt="Listing Image"  style="height:20rem"/>
             <div class="card-body">
               <p class="card-text">

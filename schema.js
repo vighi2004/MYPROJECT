@@ -9,11 +9,11 @@ const listingSchema = Joi.object({
     country: Joi.string().pattern(/^[A-Za-z\s]+$/).required() // Only allows letters & spaces
 });
 
-module.exports=listingSchema;
 const reviewSchema=Joi.object({
-    Review:Joi.object({
+    reviews:Joi.object({
         rating:Joi.number().required().min(1).max(5),
         comment:Joi.string().required()
     })
 }).required();
-module.exports=reviewSchema;
+
+module.exports = { listingSchema, reviewSchema };
