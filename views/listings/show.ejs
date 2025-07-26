@@ -49,7 +49,7 @@
                 <h5 class="card-title">Anonymous</h5>
                 <p class="card-text"><b>Rating :</b><%= review.rating%>stars</p> 
                 <p class="card-text"><b>Comment :</b><%= review.comment%></p>  
-                <form action="/listings/<%= list1._id %>/<%= review._id %>?_method=DELETE" method="POST">
+                <form action="/listings/<%= list1._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
                     <button class="btn btn-sm btn-dark">Delete</button>
                 </form>
             </div>

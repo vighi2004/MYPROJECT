@@ -1,5 +1,6 @@
 const mongoose=require("mongoose");
 const Review = require("./reviews");
+const { listingSchema } = require("../schema");
 let Schema=mongoose.Schema;
 const listingschema=new Schema(
     {
@@ -38,8 +39,11 @@ const listingschema=new Schema(
 
         }]
 
-    }
-);
-
+        })
+        //this is for deleting reviews when you delete listing but id of not deleted from backend do this middleware willl call.
+        listingschema.post("findOneAndDelete",async (listing)=>{
+            if(listing){
+              await Review.deleteMany({_id : {$in:listing.reviews}});
+            }})
 const Listing=mongoose.model("Listing",listingschema);
 module.exports=Listing;
