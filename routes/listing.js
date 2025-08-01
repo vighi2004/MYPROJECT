@@ -50,7 +50,8 @@ router.post("/",validlisting,wrapAsync(async (req,res,next)=>
         country
     });
     await newListing.save();
-    console.log(newListing);
+    //console.log(newListing);
+    req.flash("success","New Listing Created!");
     res.redirect("/listings");
 }))
 //youu can also write this instead of writting bigger code that is in input of add.ejs name=listing[title] write in all keys this is object that will generate key-value pair.
@@ -87,6 +88,7 @@ router.put("/:id",validlisting,wrapAsync(async (req,res,next)=>
     listing.country = country;
 
     await listing.save(); // Save updated listing
+    req.flash("success","Listing Updated!");
     res.redirect(`/listings/${id}`);
 }));
 //delete route
@@ -94,6 +96,7 @@ router.delete("/:id",wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     await Listing.findByIdAndDelete(id)
+    req.flash("delete","Listing Deleted Succesfully!");
     res.redirect("/listings");
 
 }))

@@ -8,6 +8,7 @@ const ExpressError=require("./utils/ExpressError.js");
 const listings=require("./routes/listing.js");
 const reviews=require("./routes/reviews.js");
 const session=require("express-session");
+const flash=require("connect-flash");
 app.use(methodOverride("_method"));
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -33,17 +34,17 @@ const sessionOptions={
   httpOnly:true
   },
 };
-
-app.use(session(sessionOptions));
-
-app.listen(3000,()=>
-{
-    console.log("connectes to port 3000");
-});
-
 app.get("/",(req,res)=>
 {
     res.send("i am here");
+})
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use((req,res,next)=>{
+    res.locals.success=req.flash("success");
+    res.locals.deleted=req.flash("delete");
+    next();
 })
 app.use("/listings",listings);
 app.use("/listings/:id/reviews",reviews);//parent
@@ -54,3 +55,7 @@ app.use((err,req,res,next)=>{
     let {status=500,message="something went wrong!"}=err;
     res.render("listings/error.ejs",{message});
 })
+app.listen(3000,()=>
+{
+    console.log("connectes to port 3000");
+});
