@@ -104,3 +104,42 @@ a{
 .edit-delete form button {
     margin-right: 7px; /* Optional: Adds spacing between the Edit and Delete buttons */
 }
+/*for navbar*/
+/* Navbar buttons styling and hover effects */
+
+.navbar-nav.ms-auto {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* space between buttons */
+}
+
+.nav-btn {
+    transition: all 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+/* Sign Up button - Outline primary */
+.btn-outline-primary.nav-btn:hover {
+    background-color: #0d6efd; /* Bootstrap primary blue */
+    color: white;
+    text-decoration: none;
+}
+
+/* Login button - Solid primary */
+.btn-primary.nav-btn:hover {
+    background-color: #0b5ed7; /* Darker primary */
+    color: white;
+    text-decoration: none;
+}
+
+/* Logout button - Danger red */
+.btn-danger.nav-btn:hover {
+    background-color: #bd2130; /* Darker danger red */
+    color: white;
+    text-decoration: none;
+}
+
+/* Optional: subtle shadow on hover */
+.nav-btn:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}

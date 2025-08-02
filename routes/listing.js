@@ -4,6 +4,7 @@ const Listing= require("../models/listing.js");
 const wrapAsync=require("../utils/wrapAsync.js");
 const ExpressError=require("../utils/ExpressError.js");
 const {listingSchema}=require("../schema.js");
+const {isLoggedIn}=require("../middleware.js");
 
 const validlisting=(req,res,next)=>{
     let{error}=listingSchema.validate(req.body);
@@ -23,7 +24,7 @@ router.get("/",wrapAsync(async (req,res,next)=>
 }))
 
 //Add route
-router.get("/add",(req,res)=>
+router.get("/add",isLoggedIn,(req,res)=>
     {
         res.render("listings/add.ejs")
     })
@@ -38,7 +39,7 @@ router.get("/:id",wrapAsync(async (req,res,next)=>
 }))
 
 //create route
-router.post("/",validlisting,wrapAsync(async (req,res,next)=>
+router.post("/",isLoggedIn,validlisting,wrapAsync(async (req,res,next)=>
 {
     let {title:title,description:description,image:image,price:price,location:location,country:country}=req.body;
     const newListing =  await new Listing({
@@ -59,14 +60,14 @@ router.post("/",validlisting,wrapAsync(async (req,res,next)=>
 //await newlist.save()
 //beacuse of this you will save more space 
 
-router.get("/:id/edit",wrapAsync(async (req,res,next)=>
+router.get("/:id/edit",isLoggedIn,wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     let list1= await Listing.findById(id);
     res.render("listings/edit.ejs",{list1});
 }))
 //update route
-router.put("/:id",validlisting,wrapAsync(async (req,res,next)=>
+router.put("/:id",isLoggedIn,validlisting,wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     let {title,description,image,price,location,country}=req.body;
@@ -92,7 +93,7 @@ router.put("/:id",validlisting,wrapAsync(async (req,res,next)=>
     res.redirect(`/listings/${id}`);
 }));
 //delete route
-router.delete("/:id",wrapAsync(async (req,res,next)=>
+router.delete("/:id",isLoggedIn,wrapAsync(async (req,res,next)=>
 {
     let {id}=req.params;
     await Listing.findByIdAndDelete(id)

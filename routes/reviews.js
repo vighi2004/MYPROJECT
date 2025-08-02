@@ -6,6 +6,7 @@ const Review = require("../models/reviews.js");
 const wrapAsync=require("../utils/wrapAsync.js");
 const ExpressError=require("../utils/ExpressError.js");
 const {reviewSchema}=require("../schema.js");
+const {isLoggedIn}=require("../middleware.js");
 //check server review
 const validReview=(req,res,next)=>{
     console.log("Received Data in Middleware:", req.body); 
@@ -19,7 +20,7 @@ const validReview=(req,res,next)=>{
     }
 }
 //post route for Review
-router.post("/",validReview,wrapAsync(async(req,res)=>{//child
+router.post("/",isLoggedIn,validReview,wrapAsync(async(req,res)=>{//child
         let listing=await Listing.findById(req.params.id);
         let newreview=new Review(req.body.reviews);
         listing.reviews.push(newreview);
@@ -30,7 +31,7 @@ router.post("/",validReview,wrapAsync(async(req,res)=>{//child
         res.redirect("/listings");
 }))
 //delete route for Review
-router.delete("/:reviewid",wrapAsync(async(req,res)=>{//child
+router.delete("/:reviewid",isLoggedIn,wrapAsync(async(req,res)=>{//child
     let {id,reviewid}=req.params;
     await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewid}});
     await Review.findByIdAndDelete(reviewid);
