@@ -3,6 +3,8 @@ const router=express.Router();
 const User=require("../models/user.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const passport=require("passport");
+const {savedUrl}=require("../middleware.js");
+
 router.get("/signUp" ,(req,res)=>{
     res.render("user/signUp.ejs");
 })
@@ -29,10 +31,11 @@ router.post("/signUp",wrapAsync(async(req,res)=>{
 router.get("/login",(req,res)=>{
     res.render("user/login.ejs");
 })
-router.post("/login",passport.authenticate('local', { failureRedirect: '/login', failureFlash: true })
+router.post("/login",savedUrl,passport.authenticate('local', { failureRedirect: '/login', failureFlash: true })
 ,async(req,res)=>{
     req.flash("success","Welcome back to Wanderlust!");
-    res.redirect("/listings");
+    let redirectUrl=res.locals.redirectUrl||"/listings";
+    res.redirect(redirectUrl);
 })
 router.get("/logOut",(req,res)=>{
     req.logout((err)=>{
