@@ -4,21 +4,7 @@ const Listing= require("../models/listing.js");
 const Review = require("../models/reviews.js");
 
 const wrapAsync=require("../utils/wrapAsync.js");
-const ExpressError=require("../utils/ExpressError.js");
-const {reviewSchema}=require("../schema.js");
-const {isLoggedIn}=require("../middleware.js");
-//check server review
-const validReview=(req,res,next)=>{
-    console.log("Received Data in Middleware:", req.body); 
-    let{error}=reviewSchema.validate(req.body);
-    if(error){
-        let errmsg=error.details.map((el)=>el.message).join(",");
-        throw new ExpressError(400,errmsg);
-    }
-    else{
-        next();
-    }
-}
+const {isLoggedIn,validReview}=require("../middleware.js");
 //post route for Review
 router.post("/",isLoggedIn,validReview,wrapAsync(async(req,res)=>{//child
         let listing=await Listing.findById(req.params.id);

@@ -9,6 +9,8 @@
         <h3><%= list1.title %></h3>           
         <img src="<%= list1.image.url %>" class="card-img-top" alt="Listing Image" style="width: 500px; height: 300px;">
         <div class="card-body">
+        <p class="card-text">Owned by  <i><%= list1.owner.username %></i></p>
+        
         <p class="card-text"><%= list1.description%></p>
         <p class="card-text">&#8377;<%=list1.price.toLocaleString("en-IN") %>/night</p>
         <p class="card-text"><%= list1.location %></p>

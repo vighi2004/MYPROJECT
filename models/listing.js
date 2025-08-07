@@ -37,7 +37,11 @@ const listingschema=new Schema(
             type:Schema.Types.ObjectId,
             ref:"Review"
 
-        }]
+        }],
+        owner:{
+            type:Schema.Types.ObjectId,
+            ref:"User",
+        },
 
         })
         //this is for deleting reviews when you delete listing but id of not deleted from backend do this middleware willl call.
