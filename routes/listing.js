@@ -3,90 +3,26 @@ const router=express.Router();
 const Listing= require("../models/listing.js");
 const wrapAsync=require("../utils/wrapAsync.js");
 const {isLoggedIn,isowner,validlisting}=require("../middleware.js");
-
+const ListingController=require("../controllers/listing.js");
 //index route
-router.get("/",wrapAsync(async (req,res,next)=>
-{
-    let alllistings=await Listing.find();
-    res.render("listings/index.ejs",{alllistings});
-}))
+router.get("/",wrapAsync(ListingController.index));
 
 //Add route
-router.get("/add",isLoggedIn,(req,res)=>
-    {
-        res.render("listings/add.ejs")
-    })
+router.get("/add",isLoggedIn,ListingController.renderNewform);
     
 //show route
-router.get("/:id",wrapAsync(async (req,res,next)=>
-{
-    let {id}=req.params;
-    let list1= await Listing.findById(id).populate("reviews").populate("owner");
-    console.log("✅ Populated Reviews:", list1.reviews);
-    res.render("listings/Show.ejs",{list1});
-}))
+router.get("/:id",wrapAsync(ListingController.showListing));
 
 //create route
-router.post("/",isLoggedIn,validlisting,wrapAsync(async (req,res,next)=>
-{
-    let {title:title,description:description,image:image,price:price,location:location,country:country}=req.body;
-    const newListing =  await new Listing({
-        title,
-        description,
-        image,
-        price,
-        location,
-        country
-    });
-    newListing.owner=req.user._id; 
-    await newListing.save();
-    //console.log(newListing);
-    req.flash("success","New Listing Created!");
-    res.redirect("/listings");
-}))
+router.post("/",isLoggedIn,validlisting,wrapAsync(ListingController.createListing));
 //youu can also write this instead of writting bigger code that is in input of add.ejs name=listing[title] write in all keys this is object that will generate key-value pair.
 // let newlist= await new Listing(req.body.listing)
 //await newlist.save()
 //beacuse of this you will save more space 
-
-router.get("/:id/edit",isLoggedIn,isowner,wrapAsync(async (req,res,next)=>
-{
-    let {id}=req.params;
-    let list1= await Listing.findById(id);
-    res.render("listings/edit.ejs",{list1});
-}))
+//edit route
+router.get("/:id/edit",isLoggedIn,isowner,wrapAsync(ListingController.renderEditform));
 //update route
-router.put("/:id",isLoggedIn,isowner,validlisting,wrapAsync(async (req,res,next)=>
-{
-    let {id}=req.params;
-    let {title,description,image,price,location,country}=req.body;
-    let listing = await Listing.findById(id);
-    if (!listing) {
-        return res.status(404).send("Listing not found!");
-    }
-
-    if (image && image.trim() !== "") {
-        listing.image = { url: image };  // Store URL inside an object
-    }
-
-    // Update other fields
-    listing.title = title;
-    listing.description = description;
-    listing.price = price;
-    listing.location = location;
-    listing.country = country;
-
-    await listing.save(); // Save updated listing
-    req.flash("success","Listing Updated!");
-    res.redirect(`/listings/${id}`);
-}));
+router.put("/:id",isLoggedIn,isowner,validlisting,wrapAsync(ListingController.updateListing));
 //delete route
-router.delete("/:id",isLoggedIn,isowner,wrapAsync(async (req,res,next)=>
-{
-    let {id}=req.params;
-    await Listing.findByIdAndDelete(id)
-    req.flash("delete","Listing Deleted Succesfully!");
-    res.redirect("/listings");
-
-}))
+router.delete("/:id",isLoggedIn,isowner,wrapAsync(ListingController.destroyListing));
 module.exports=router;
