@@ -24,6 +24,8 @@ module.exports.showListing=async (req,res,next)=>
 
 module.exports.createListing=async (req,res,next)=>
 {
+    let url= req.file.path;
+    let filename= req.file.filename;
     let {title:title,description:description,image:image,price:price,location:location,country:country}=req.body;
     const newListing =  await new Listing({
         title,
@@ -34,6 +36,7 @@ module.exports.createListing=async (req,res,next)=>
         country
     });
     newListing.owner=req.user._id; 
+    newListing.image = { url, filename };  // Store URL and filename inside an object.
     await newListing.save();
     //console.log(newListing);
     req.flash("success","New Listing Created!");
@@ -56,18 +59,20 @@ module.exports.updateListing=async (req,res,next)=>
         return res.status(404).send("Listing not found!");
     }
 
-    if (image && image.trim() !== "") {
-        listing.image = { url: image };  // Store URL inside an object
-    }
-
     // Update other fields
     listing.title = title;
     listing.description = description;
     listing.price = price;
     listing.location = location;
     listing.country = country;
-
-    await listing.save(); // Save updated listing
+    if(req.file) {
+        let url= req.file.path;
+       let filename= req.file.filename;
+        listing.image = { url, filename };  // Update image with new URL and filename
+    }
+     await listing.save(); // Save updated listing
+     
+   
     req.flash("success","Listing Updated!");
     res.redirect(`/listings/${id}`);
 };
