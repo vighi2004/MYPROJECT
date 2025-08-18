@@ -1,86 +1,173 @@
-const Listing=require("../models/listing");
-module.exports.index=async (req,res,next)=>
-{
-    let alllistings=await Listing.find();
-    res.render("listings/index.ejs",{alllistings});
+// controllers/listing.js
+const axios = require("axios");
+const Listing = require("../models/listing");
+
+// ========================
+// INDEX
+// ========================
+module.exports.index = async (req, res, next) => {
+    let alllistings = await Listing.find();
+    res.render("listings/index.ejs", { alllistings });
 };
 
-module.exports.renderNewform=(req,res)=>
-{
-        res.render("listings/add.ejs")
+// ========================
+// NEW FORM
+// ========================
+module.exports.renderNewform = (req, res) => {
+    res.render("listings/add.ejs");
 };
 
-module.exports.showListing=async (req,res,next)=>
-{
-    let {id}=req.params;
-    let list1= await Listing.findById(id).populate({path:"reviews",populate:{path:"author"}}).populate("owner");
+// ========================
+// SHOW LISTING
+// ========================
+module.exports.showListing = async (req, res, next) => {
+    let { id } = req.params;
+    let list1 = await Listing.findById(id)
+        .populate({ path: "reviews", populate: { path: "author" } })
+        .populate("owner");
+
     if (!list1) {
-      req.flash("error", "Listing no longer exists!");
-      return res.redirect("/listings");
+        req.flash("error", "Listing no longer exists!");
+        return res.redirect("/listings");
     }
-   // console.log("✅ Populated Reviews:", list1.reviews);
-    res.render("listings/Show.ejs",{list1});
+
+    res.render("listings/Show.ejs", { list1 });
 };
 
-module.exports.createListing=async (req,res,next)=>
-{
-    let url= req.file.path;
-    let filename= req.file.filename;
-    let {title:title,description:description,image:image,price:price,location:location,country:country}=req.body;
-    const newListing =  await new Listing({
+// ========================
+// CREATE LISTING
+// ========================
+module.exports.createListing = async (req, res, next) => {
+    let url = req.file?.path;
+    let filename = req.file?.filename;
+    let { title, description, price, location, country } = req.body;
+
+    // Geocode with Nominatim
+    let geometry = {
+        type: "Point",
+        coordinates: [72.8777, 19.0760], // Default Mumbai fallback
+    };
+
+    try {
+        const geoResponse = await axios.get("https://nominatim.openstreetmap.org/search", {
+            params: {
+                q: `${location}, ${country}`,
+                format: "json",
+                limit: 1,
+            },
+        });
+
+        if (geoResponse.data.length > 0) {
+            geometry = {
+                type: "Point",
+                coordinates: [
+                    parseFloat(geoResponse.data[0].lon),
+                    parseFloat(geoResponse.data[0].lat),
+                ],
+            };
+        }
+    } catch (err) {
+        console.error("Geocoding error:", err);
+    }
+
+    const newListing = new Listing({
         title,
         description,
-        image,
+        image: { url, filename },
         price,
         location,
-        country
+        country,
+        geometry,
     });
-    newListing.owner=req.user._id; 
-    newListing.image = { url, filename };  // Store URL and filename inside an object.
+
+    newListing.owner = req.user._id;
     await newListing.save();
-    //console.log(newListing);
-    req.flash("success","New Listing Created!");
+
+    req.flash("success", "New Listing Created!");
     res.redirect("/listings");
 };
 
-module.exports.renderEditform=async (req,res,next)=>
-{
-    let {id}=req.params;
-    let list1= await Listing.findById(id);
-    res.render("listings/edit.ejs",{list1});
-};
+// ========================
+// EDIT FORM
+// ========================
+module.exports.renderEditform = async (req, res, next) => {
+    let { id } = req.params;
+    let list1 = await Listing.findById(id);
 
-module.exports.updateListing=async (req,res,next)=>
-{
-    let {id}=req.params;
-    let {title,description,image,price,location,country}=req.body;
-    let listing = await Listing.findById(id);
-    if (!listing) {
-        return res.status(404).send("Listing not found!");
+    if (!list1) {
+        req.flash("error", "Listing not found!");
+        return res.redirect("/listings");
     }
 
-    // Update other fields
+    res.render("listings/edit.ejs", { list1 });
+};
+
+// ========================
+// UPDATE LISTING
+// ========================
+module.exports.updateListing = async (req, res, next) => {
+    let { id } = req.params;
+    let { title, description, price, location, country } = req.body;
+    let listing = await Listing.findById(id);
+
+    if (!listing) {
+        req.flash("error", "Listing not found!");
+        return res.redirect("/listings");
+    }
+
+    // --- Start: Added Geocoding Logic ---
+    let geometry = listing.geometry; // Keep old geometry as a fallback
+
+    try {
+        const geoResponse = await axios.get("https://nominatim.openstreetmap.org/search", {
+            params: {
+                q: `${location}, ${country}`,
+                format: "json",
+                limit: 1,
+            },
+        });
+
+        if (geoResponse.data.length > 0) {
+            geometry = {
+                type: "Point",
+                coordinates: [
+                    parseFloat(geoResponse.data[0].lon),
+                    parseFloat(geoResponse.data[0].lat),
+                ],
+            };
+        }
+    } catch (err) {
+        console.error("Geocoding error during update:", err);
+    }
+    // --- End: Geocoding Logic ---
+
+    // Update fields
     listing.title = title;
     listing.description = description;
     listing.price = price;
     listing.location = location;
     listing.country = country;
-    if(req.file) {
-        let url= req.file.path;
-       let filename= req.file.filename;
-        listing.image = { url, filename };  // Update image with new URL and filename
+    listing.geometry = geometry; // <-- Assign the new geometry
+
+    // Update image if a new one is uploaded
+    if (req.file) {
+        let url = req.file.path;
+        let filename = req.file.filename;
+        listing.image = { url, filename };
     }
-     await listing.save(); // Save updated listing
-     
-   
-    req.flash("success","Listing Updated!");
+
+    await listing.save();
+
+    req.flash("success", "Listing Updated!");
     res.redirect(`/listings/${id}`);
 };
+// ========================
+// DELETE LISTING
+// ========================
+module.exports.destroyListing = async (req, res, next) => {
+    let { id } = req.params;
+    await Listing.findByIdAndDelete(id);
 
-module.exports.destroyListing=async (req,res,next)=>
-{
-    let {id}=req.params;
-    await Listing.findByIdAndDelete(id)
-    req.flash("delete","Listing Deleted Succesfully!");
+    req.flash("delete", "Listing Deleted Successfully!");
     return res.redirect("/listings");
 };

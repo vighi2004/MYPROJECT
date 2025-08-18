@@ -34,6 +34,17 @@ const listingschema=new Schema(
             type:Schema.Types.ObjectId,
             ref:"User",
         },
+        geometry:{
+            type: {
+                type: String,
+                enum: ['Point'], // 'type' must be 'Point'
+                required: true
+            },
+            coordinates: {
+                type: [Number], // [longitude, latitude]
+                required: true
+            }
+        }
 
         })
         //this is for deleting reviews when you delete listing but id of not deleted from backend do this middleware willl call.
