@@ -41,10 +41,6 @@ const sessionOptions={
   httpOnly:true
   },
 };
-app.get("/",(req,res)=>
-{
-    res.send("i am here");
-})
 app.use(session(sessionOptions));
 app.use(flash());
 

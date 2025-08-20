@@ -90,17 +90,18 @@
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Custom home icon
-    const homeIcon = L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/25/25694.png',
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -35]
-    });
+    
+const locationIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png', // red pin icon
+    iconSize: [40, 40],   // size of the icon
+    iconAnchor: [20, 40], 
+    popupAnchor: [0, -35] 
+});
+
 
     L.marker(
         [<%= list1.geometry.coordinates[1] %>, <%= list1.geometry.coordinates[0] %>],
-        { icon: homeIcon }
+        { icon: locationIcon }
     )
     .addTo(map)
     .bindPopup(`<b><%= list1.title %></b><br><%= list1.location %>, <%= list1.country %>`)
