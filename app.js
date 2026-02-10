@@ -73,7 +73,7 @@ app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
     res.locals.deleted=req.flash("delete");
     res.locals.error=req.flash("error");
-    res.locals.currUser=req.user;
+    res.locals.currUser = req.user || null;
     next();
 })
 app.use("/listings",listingRouter);
@@ -86,7 +86,7 @@ app.use((err,req,res,next)=>{
     let {status=500,message="something went wrong!"}=err;
     res.render("listings/error.ejs",{message});
 })
-app.listen(3000,()=>
-{
-    console.log("connectes to port 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
