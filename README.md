@@ -1,4 +1,5 @@
 🚀 WanderLust – Travel Listing & Review Platform
+
 A full-stack travel listing web application where users can explore destinations, create listings, post reviews, upload images, and view locations on interactive maps.
 
 Built with the MERN-style backend stack using **Node.js, Express, MongoDB, EJS**, and deployed live on **Render**.
